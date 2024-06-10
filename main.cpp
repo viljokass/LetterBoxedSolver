@@ -39,15 +39,13 @@ struct Side {
 };
 
 struct Word {
-    std::string word;
     std::vector<char> letters;
     unsigned short length;
 
     Word(std::string in_word) {
-        word = in_word;
-        for (char letter : word)
+        for (char letter : in_word)
             letters.push_back(letter);
-        length = word.size();
+        length = in_word.size();
     }
 };
 
@@ -73,7 +71,7 @@ std::vector<Word> solve(std::vector<Word> words, std::vector<Side> sides) {
     std::vector<Word> prel_words;
     for (Word word : words) {
 	std::vector<char> tmp_word;
-	for (char letter : word.word)
+	for (char letter : word.letters)
 	    tmp_word.push_back(letter);
 	std::sort(tmp_word.begin(), tmp_word.end());
 	tmp_word.erase(unique(tmp_word.begin(), tmp_word.end()), tmp_word.end());
@@ -90,7 +88,7 @@ std::vector<Word> solve(std::vector<Word> words, std::vector<Side> sides) {
     std::vector<Word> final_words;
     for (Word word : prel_words) {
 	SideType current_side = StartSide;
-	for (char letter : word.word) {
+	for (char letter : word.letters) {
 	    if (current_side == NoSide) break;
 	    switch (current_side) {
 	        case StartSide:
@@ -155,14 +153,16 @@ std::vector<Word> read_file(const char *file_name) {
 }
 
 bool compare_length(const Word &a, const Word &b) {
-    return a.word[0] < b.word[0];
+    return a.letters[0] < b.letters[0];
 }
 
 void write_to_file(const char *file_name, std::vector<Word> words) {
     std::ofstream file_stream;
     file_stream.open(file_name);
     for(Word word : words) {
-        file_stream << word.word << std::endl;
+	for (char letter : word.letters)
+            file_stream << letter;
+        file_stream << std::endl;
     }
     file_stream.close();
 }
