@@ -4,6 +4,7 @@
 #include <cstring>
 #include <vector>
 #include <algorithm>
+#include <cctype>
 
 enum SideType {Right, Top, Left, Bottom, StartSide, NoSide};
 std::string side_string(SideType type) {
@@ -77,7 +78,7 @@ std::vector<Word> solve(std::vector<Word> words, std::vector<Side> sides) {
 	std::sort(tmp_word.begin(), tmp_word.end());
 	tmp_word.erase(unique(tmp_word.begin(), tmp_word.end()), tmp_word.end());
 	if (std::includes(available_letters.begin(), available_letters.end(), tmp_word.begin(), tmp_word.end()))
-	    prel_words.push_back(word);
+	    prel_words.push_back(word);	
     }
     // Temporary side combinations, so that it doesnt need to be calculated each time;
     std::vector<Side> right, top, left, bottom;
@@ -154,7 +155,7 @@ std::vector<Word> read_file(const char *file_name) {
 }
 
 bool compare_length(const Word &a, const Word &b) {
-    return a.length > b.length;
+    return a.word[0] < b.word[0];
 }
 
 void write_to_file(const char *file_name, std::vector<Word> words) {
