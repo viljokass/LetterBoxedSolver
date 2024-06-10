@@ -1,10 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <cstring>
 #include <vector>
+#include <cstring>
 #include <algorithm>
-#include <cctype>
 
 enum SideType {Right, Top, Left, Bottom, StartSide, NoSide};
 std::string side_string(SideType type) {
@@ -111,7 +110,7 @@ std::vector<Side> get_sides(const char *side_desc) {
     if (len != 15) exit(-1);
     int char_index = 0;
     char side_chars[12];
-    for (int i = 0; i < len; ++i) {
+    for (int i = 0; i < 15; ++i) {
 	char letter = side_desc[i];
         if (letter != '-') {
 	    side_chars[char_index] = letter;
