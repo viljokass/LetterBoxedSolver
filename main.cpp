@@ -37,15 +37,15 @@ struct Side {
     }
 };
 
-SideType found_on_sides(char letter, std::vector<Side> &sides) {
-    for (Side side : sides) {
+SideType found_on_sides(char letter, std::vector<Side> *sides) {
+    for (Side side : *sides) {
         for (char side_letter : side.letters)
 	    if (side_letter == letter) return side.side_type;
     }
     return NoSide;
 }
 
-void solve(std::vector<std::string> &words, std::vector<Side> &sides, std::vector<std::string> &final_words) {
+void solve(std::vector<std::string> *words, std::vector<Side> sides, std::vector<std::string> *final_words) {
     // Remove all words that dont have the letters of the sides.
     // Take a list of all letters on the sides
     std::vector<char> available_letters;
@@ -57,7 +57,7 @@ void solve(std::vector<std::string> &words, std::vector<Side> &sides, std::vecto
     // compare the word's letters to side letters
     // List of preliminary words, that we'll use to do the actual solving.
     std::vector<std::string> prel_words;
-    for (std::string word : words) {
+    for (std::string word : *words) {
 	std::vector<char> tmp_word;
 	for (char letter : word)
 	    tmp_word.push_back(letter);
@@ -73,37 +73,37 @@ void solve(std::vector<std::string> &words, std::vector<Side> &sides, std::vecto
     left.push_back(sides[0]);   left.push_back(sides[1]);    left.push_back(sides[3]);
     bottom.push_back(sides[0]); bottom.push_back(sides[1]);  bottom.push_back(sides[2]);
 
-    for (std::string  word : prel_words) {
+    for (std::string word : prel_words) {
 	SideType current_side = StartSide;
 	for (char letter : word) {
 	    if (current_side == NoSide) break;
 	    switch (current_side) {
 	        case StartSide:
-		    current_side = found_on_sides(letter, sides);
+		    current_side = found_on_sides(letter, &sides);
 		    break;
 		case Right:
-		    current_side = found_on_sides(letter, right);
+		    current_side = found_on_sides(letter, &right);
 		    break;
 		case Top:
-		    current_side = found_on_sides(letter, top);
+		    current_side = found_on_sides(letter, &top);
 		    break;
 		case Left:
-		    current_side = found_on_sides(letter, left);
+		    current_side = found_on_sides(letter, &left);
 		    break;
 		case Bottom:
-		    current_side = found_on_sides(letter, bottom);
+		    current_side = found_on_sides(letter, &bottom);
 		    break;
 		case NoSide:
 		    break;
 	    }
 	}
 	if (current_side != NoSide) {
-            final_words.push_back(word);
+            final_words->push_back(word);
 	}
     }
 }
 
-void get_sides(const char *side_desc, std::vector<Side> &sides) {
+void get_sides(const char *side_desc, std::vector<Side> *sides) {
     size_t len = strlen(side_desc);
     if (len != 15) exit(-1);
     int char_index = 0;
@@ -118,18 +118,18 @@ void get_sides(const char *side_desc, std::vector<Side> &sides) {
     for (int i = 0; i < 4; ++i) {
 	SideType type = (SideType)(i);
 	Side side(type, side_chars[3*i + 0], side_chars[3*i + 1], side_chars[3*i + 2]);
-	sides.push_back(side);
+	sides->push_back(side);
     } 
 }
 
 // Read the file
-void read_file(const char *file_name, std::vector<std::string> &words) {
+void read_file(const char *file_name, std::vector<std::string> *words) {
     std::ifstream file(file_name);
     std::string line;
 
     while (std::getline(file, line)) {
 	if (line.size() > 2)
-	    words.push_back(line);
+	    words->push_back(line);
     }
 }
 
@@ -161,9 +161,9 @@ int main(int argc, char *argv[]) {
     std::vector<Side> sides;
     std::vector<std::string> final_words;
 
-    read_file(argv[1], words);
-    get_sides(argv[2], sides);
-    solve(words, sides, final_words);
+    read_file(argv[1], &words);
+    get_sides(argv[2], &sides);
+    solve(&words, sides, &final_words);
     std::sort(final_words.begin(), final_words.end(), compare_length);
     write_to_file(argv[3], final_words); 
     
